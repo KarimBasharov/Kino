@@ -12,9 +12,34 @@ namespace Kinozal
 {
     public partial class Bigg : Form
     {
+        private List<Label> _labels;
+        private int xOffset = 10;
+        private int yOffset = 10;
+
         public Bigg()
         {
             InitializeComponent();
+
+            _labels = new List<Label>();
+            for (var i = 0; i <= 64; i++)
+                _labels.Add(new Label() { Name = "lbl" + i, Height = 50, Width = 50, MinimumSize = new Size(50, 50), BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D, BackColor = Color.Green });
+
+            // 581, 517
+            var x = 0;
+            var y = 0;
+
+            foreach (var lbl in _labels)
+            {
+                if (x >= 650)
+                {
+                    x = 0;
+                    y = y + lbl.Height + 2;
+                }
+
+                lbl.Location = new Point(x, y);
+                this.Controls.Add(lbl);
+                x += lbl.Width;
+            }
         }
     }
 }

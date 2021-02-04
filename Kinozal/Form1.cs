@@ -62,6 +62,23 @@ namespace Kinozal
             bigg.Show();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            timer1.Interval = 1000;
+            timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            int R, G, B;
+            R = rnd.Next(0, 255);
+            G = rnd.Next(0, 255);
+            B = rnd.Next(0, 255);
+
+            BackColor = Color.FromArgb(R, G, B);
+        }
+
         private void Btn2_Click(object sender, EventArgs e)
         {
             Mediumm mediumm = new Mediumm();
