@@ -22,23 +22,44 @@ namespace Kinozal
 
             _labels = new List<Label>();
             for (var i = 0; i <= 64; i++)
-                _labels.Add(new Label() { Name = "lbl" + i, Height = 50, Width = 50, MinimumSize = new Size(50, 50), BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D, BackColor = Color.Green });
-
-            // 581, 517
-            var x = 0;
-            var y = 0;
-
-            foreach (var lbl in _labels)
             {
-                if (x >= 650)
+                Label a = new Label()
                 {
-                    x = 0;
-                    y = y + lbl.Height + 2;
-                }
+                    Name = "lbl" + i,
+                    Height = 50,
+                    Width = 50,
+                    MinimumSize = new Size(50, 50),
+                    BorderStyle = BorderStyle.Fixed3D,
+                    BackColor = Color.Green
+                };
+                a.MouseClick += A_MouseClick;
+                _labels.Add(a);
+                // 581, 517
+                var x = 0;
+                var y = 0;
 
-                lbl.Location = new Point(x, y);
-                this.Controls.Add(lbl);
-                x += lbl.Width;
+                foreach (var lbl in _labels)
+                {
+                    if (x >= 650)
+                    {
+                        x = 0;
+                        y = y + lbl.Height + 2;
+                    }
+
+                    lbl.Location = new Point(x, y);
+                    this.Controls.Add(lbl);
+                    x += lbl.Width;
+                }
+            }
+        }
+
+        private void A_MouseClick(object sender, MouseEventArgs e)
+        {
+            var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
+            if (answer == DialogResult.Yes)
+            {
+                var a = (Label)sender;
+                a.BackColor = Color.Red;
             }
         }
     }

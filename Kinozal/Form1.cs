@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,37 @@ namespace Kinozal
 {
     public partial class Form1 : Form
     {
+        SqlConnection connect = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\opilane\source\repos\KarimBasharov\Kinozal\Kinozal\AppData\Database1.mdf; Integrated Security = True");
+        SqlCommand command;
+        SqlDataAdapter adapter, adapter2;
+        SaveFileDialog save;
+
         Button btn1, btn2, btn3;
         Label lbl;
+        ComboBox moviebox;
+        DataGridView moviedata;
         public Form1()
         {
+            DisplayData();
             InitializeComponent();
-            this.Height = 191;
-            this.Width = 367;
+            //this.Height = 191;
+            //this.Width = 367;
+            this.Height = 406;
+            this.Width = 900;
+            DisplayData();
+            moviedata = new DataGridView
+            {
+                Location = new Point(451, 30),
+                Height = 212,
+                Width = 411
+            };
+            this.Controls.Add(moviedata);
+
+            moviebox = new ComboBox
+            {
+                Location = new Point(311, 30)
+            };
+            this.Controls.Add(moviebox);
             btn1 = new Button
             {
                 Text = "Маленький",
@@ -89,6 +114,22 @@ namespace Kinozal
         {
             Smalll small = new Smalll();
             small.Show();
+        }
+        private void DisplayData()
+        {
+            connect.Open();
+            DataTable table = new DataTable();
+            adapter = new SqlDataAdapter("SELECT * FROM Movie", connect);
+            adapter.Fill(table);
+            moviedata.DataSource = table;
+            adapter2 = new SqlDataAdapter("SELECT name FROM Movie", connect);
+            DataTable grupp_table = new DataTable();
+            adapter2.Fill(grupp_table);
+            foreach (DataRow row in grupp_table.Rows)
+            {
+                moviebox.Items.Add(row["name"]);
+            }
+            connect.Close();
         }
 
     }
