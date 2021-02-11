@@ -31,7 +31,7 @@ namespace Kinozal
                         Width = 50, 
                         MinimumSize = new Size(50, 50), 
                         BorderStyle = BorderStyle.Fixed3D, 
-                        BackColor = Color.Green
+                        BackColor = Color.LightYellow
                 };
                 a.MouseClick += A_MouseClick;
                 _labels.Add(a);

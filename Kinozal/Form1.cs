@@ -15,8 +15,10 @@ namespace Kinozal
     {
         SqlConnection connect = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\opilane\source\repos\KarimBasharov\Kinozal\Kinozal\AppData\Database1.mdf; Integrated Security = True");
         SqlCommand command;
+
         SqlDataAdapter adapter, adapter2;
         SaveFileDialog save;
+        int Id = 0;
 
         Button btn1, btn2, btn3;
         Label lbl;
@@ -24,13 +26,19 @@ namespace Kinozal
         DataGridView moviedata;
         public Form1()
         {
-            DisplayData();
-            InitializeComponent();
-            //this.Height = 191;
-            //this.Width = 367;
-            this.Height = 406;
-            this.Width = 900;
-            DisplayData();
+            //connect.Open();
+            //adapter = new SqlDataAdapter("SELECT Saalinimetus FROM Saalid", connect);
+            //DataTable Saalidd = new DataTable();
+            //adapter.Fill(Saalidd);
+            //saalide_list = new ListBox();
+            //saalide_list.Location = new Point(10,10);
+            //saalide_list.Font = new Font(DefaultFont.FontFamily, 14);
+            //new Font(DefaultFont.FontFamily, 14);
+            //foreach (DataRow row in Saalid.Rows)
+            //{
+            //    saalide_list.Items.Add(row["Saalinimetus"])
+            //}
+            //connect.Close();
             moviedata = new DataGridView
             {
                 Location = new Point(451, 30),
@@ -38,12 +46,19 @@ namespace Kinozal
                 Width = 411
             };
             this.Controls.Add(moviedata);
-
             moviebox = new ComboBox
             {
-                Location = new Point(311, 30)
+                Location = new Point(321, 30)
             };
             this.Controls.Add(moviebox);
+            this.moviebox.SelectedIndexChanged += Moviebox_SelectedIndexChanged;
+
+            DisplayData();
+            InitializeComponent();
+            //this.Height = 191;
+            //this.Width = 367;
+            this.Height = 406;
+            this.Width = 900;
             btn1 = new Button
             {
                 Text = "Маленький",
@@ -81,6 +96,25 @@ namespace Kinozal
             this.Controls.Add(lbl);
         }
 
+        private void Moviebox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (moviebox.SelectedIndex != -1)
+            {
+                /*command = new SqlCommand("SELECT * FROM opilane WHERE GruppId = @grupp", connect);
+                connect.Open();
+                command.Parameters.AddWithValue("@grupp", comboBox1.SelectedIndex + 1);
+                command.ExecuteNonQuery();
+                connect.Close();*/
+                DataTable table = new DataTable();
+                adapter = new SqlDataAdapter();
+                command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
+                command.Parameters.AddWithValue("@mo", SqlDbType.Int).Value = moviebox.SelectedIndex + 1;
+                adapter.SelectCommand = command;
+                adapter.Fill(table);
+                moviedata.DataSource = table;
+            }
+        }
+
         private void Btn3_Click(object sender, EventArgs e)
         {
             Bigg bigg = new Bigg();
@@ -89,7 +123,7 @@ namespace Kinozal
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            timer1.Interval = 1000;
+            timer1.Interval = 2000;
             timer1.Start();
         }
 
@@ -122,10 +156,11 @@ namespace Kinozal
             adapter = new SqlDataAdapter("SELECT * FROM Movie", connect);
             adapter.Fill(table);
             moviedata.DataSource = table;
+
             adapter2 = new SqlDataAdapter("SELECT name FROM Movie", connect);
-            DataTable grupp_table = new DataTable();
-            adapter2.Fill(grupp_table);
-            foreach (DataRow row in grupp_table.Rows)
+            DataTable movie_table = new DataTable();
+            adapter2.Fill(movie_table);
+            foreach (DataRow row in movie_table.Rows)
             {
                 moviebox.Items.Add(row["name"]);
             }
