@@ -61,7 +61,7 @@ namespace Kinozal
             if (answer == DialogResult.Yes)
             {
                 var a = (Label)sender;
-                a.BackColor = Color.Red;
+                a.BackColor = Color.Yellow;
             }
         }
     }
