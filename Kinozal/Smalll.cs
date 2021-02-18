@@ -56,12 +56,31 @@ namespace Kinozal
 
         private void A_MouseClick(object sender, MouseEventArgs e)
         {
-            var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
-            if (answer == DialogResult.Yes)
-            {
-                var a = (Label)sender;
-                a.BackColor = Color.Yellow;
-            }
+            var a = (Label)sender;
+            a.BackColor = Color.Green;
+            //var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
+            //if (answer == DialogResult.Yes)
+            //{
+            //    var a = (Label)sender;
+            //    a.BackColor = Color.Yellow;
+            //}
+        }
+
+        private void Smalll_Load(object sender, EventArgs e)
+        {
+            timer1.Interval = 5000;
+            timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            int R, G, B;
+            R = rnd.Next(0, 255);
+            G = rnd.Next(0, 255);
+            B = rnd.Next(0, 255);
+
+            BackColor = Color.FromArgb(R, G, B);
         }
     }
 }

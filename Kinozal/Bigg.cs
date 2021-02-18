@@ -30,7 +30,7 @@ namespace Kinozal
                     Width = 50,
                     MinimumSize = new Size(50, 50),
                     BorderStyle = BorderStyle.Fixed3D,
-                    BackColor = Color.Green
+                    BackColor = Color.LightYellow
                 };
                 a.MouseClick += A_MouseClick;
                 _labels.Add(a);
@@ -55,12 +55,14 @@ namespace Kinozal
 
         private void A_MouseClick(object sender, MouseEventArgs e)
         {
-            var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
-            if (answer == DialogResult.Yes)
-            {
-                var a = (Label)sender;
-                a.BackColor = Color.Yellow;
-            }
+            var a = (Label)sender;
+            a.BackColor = Color.Green;
+            //var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
+            //if (answer == DialogResult.Yes)
+            //{
+            //    var a = (Label)sender;
+            //    a.BackColor = Color.Yellow;
+            //}
         }
     }
 }

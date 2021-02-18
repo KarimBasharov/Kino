@@ -17,12 +17,11 @@ namespace Kinozal
         SqlCommand command;
 
         SqlDataAdapter adapter, adapter2, adapter3;
-        SaveFileDialog save;
         int Id = 0;
 
-        Button btn1, btn2, btn3;
-        Label lbl;
-        ComboBox moviebox, sessionbox;
+        /*Button btn1, btn2, btn3;
+        Label lbl;*/
+        ComboBox moviebox, sessionbox, roombox;
         DataGridView moviedata;
         public Form1()
         {
@@ -53,6 +52,17 @@ namespace Kinozal
             this.Controls.Add(moviebox);
             this.moviebox.SelectedIndexChanged += Moviebox_SelectedIndexChanged;
 
+            roombox = new ComboBox
+            {
+                Location = new Point(321, 90)
+            };
+            roombox.Items.Add("Маленький");
+            roombox.Items.Add("Средний");
+            roombox.Items.Add("Большой");
+
+            this.Controls.Add(roombox);
+            this.roombox.SelectedIndexChanged += Roombox_SelectedIndexChanged;
+
             sessionbox = new ComboBox
             {
                 Location = new Point(321, 60)
@@ -66,7 +76,7 @@ namespace Kinozal
             //this.Width = 367;
             this.Height = 406;
             this.Width = 900;
-            btn1 = new Button
+            /*btn1 = new Button
             {
                 Text = "Маленький",
                 Location = new Point(11, 70),
@@ -100,11 +110,32 @@ namespace Kinozal
                 Width = 280,
             };
             lbl.Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
-            this.Controls.Add(lbl);
+            this.Controls.Add(lbl);*/
+        }
+
+        private void Roombox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (roombox.SelectedIndex == 0)
+            {
+                Smalll small = new Smalll();
+                small.Show();
+            }
+            else if (roombox.SelectedIndex == 1)
+            {
+                Mediumm mediumm = new Mediumm();
+                mediumm.Show();
+            }
+            else if (roombox.SelectedIndex == 2)
+            {
+                Bigg bigg = new Bigg();
+                bigg.Show();
+            }
         }
 
         private void Sessionbox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (moviebox.SelectedIndex == 0)
+            {
                 DataTable table = new DataTable();
                 adapter3 = new SqlDataAdapter();
                 command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
@@ -112,14 +143,34 @@ namespace Kinozal
                 adapter3.SelectCommand = command;
                 adapter3.Fill(table);
                 moviedata.DataSource = table;
-
-                //adapter3 = new SqlDataAdapter("SELECT Date, Time FROM Session", connect);
-                //DataTable session_table = new DataTable();
-                //adapter3.Fill(session_table);
-                //foreach (DataRow row in session_table.Rows)
-                //{
-                //    sessionbox.Items.Add(row["Date"]);
-                //}
+            }
+            if (moviebox.SelectedIndex == 1)
+            {
+                DataTable table = new DataTable();
+                adapter3 = new SqlDataAdapter();
+                command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
+                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 4;
+                adapter3.SelectCommand = command;
+                adapter3.Fill(table);
+                moviedata.DataSource = table;
+            }
+            if (moviebox.SelectedIndex == 2)
+            {
+                DataTable table = new DataTable();
+                adapter3 = new SqlDataAdapter();
+                command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
+                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 8;
+                adapter3.SelectCommand = command;
+                adapter3.Fill(table);
+                moviedata.DataSource = table;
+            }
+            //adapter3 = new SqlDataAdapter("SELECT Date, Time FROM Session", connect);
+            //DataTable session_table = new DataTable();
+            //adapter3.Fill(session_table);
+            //foreach (DataRow row in session_table.Rows)
+            //{
+            //    sessionbox.Items.Add(row["Date"]);
+            //}
         }
         private void Moviebox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -127,6 +178,7 @@ namespace Kinozal
             {
                 if (moviebox.SelectedIndex == 0)
                 {
+                    sessionbox.Items.Clear();
                     DataTable table = new DataTable();
                     adapter = new SqlDataAdapter();
                     command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
@@ -145,6 +197,7 @@ namespace Kinozal
                 }
                 else if (moviebox.SelectedIndex == 1)
                 {
+                    sessionbox.Items.Clear();
                     DataTable table = new DataTable();
                     adapter = new SqlDataAdapter();
                     command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
@@ -153,7 +206,26 @@ namespace Kinozal
                     adapter.Fill(table);
                     moviedata.DataSource = table;
 
-                    adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film=2", connect);
+                    adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film = 2", connect);
+                    DataTable session_table = new DataTable();
+                    adapter3.Fill(session_table);
+                    foreach (DataRow row in session_table.Rows)
+                    {
+                        sessionbox.Items.Add(row["Date"]);
+                    }
+                }
+                else if (moviebox.SelectedIndex == 2)
+                {
+                    sessionbox.Items.Clear();
+                    DataTable table = new DataTable();
+                    adapter = new SqlDataAdapter();
+                    command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
+                    command.Parameters.AddWithValue("@mo", SqlDbType.Int).Value = moviebox.SelectedIndex + 1;
+                    adapter.SelectCommand = command;
+                    adapter.Fill(table);
+                    moviedata.DataSource = table;
+
+                    adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film = 3", connect);
                     DataTable session_table = new DataTable();
                     adapter3.Fill(session_table);
                     foreach (DataRow row in session_table.Rows)
@@ -176,11 +248,11 @@ namespace Kinozal
             }
         }
 
-        private void Btn3_Click(object sender, EventArgs e)
+        /*private void Btn3_Click(object sender, EventArgs e)
         {
             Bigg bigg = new Bigg();
             bigg.Show();
-        }
+        }*/
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -199,24 +271,24 @@ namespace Kinozal
             BackColor = Color.FromArgb(R, G, B);
         }
 
-        private void Btn2_Click(object sender, EventArgs e)
+        /*private void Btn2_Click(object sender, EventArgs e)
         {
             Mediumm mediumm = new Mediumm();
             mediumm.Show();
-        }
+        }*/
 
-        private void Btn1_Click(object sender, EventArgs e)
+        /*private void Btn1_Click(object sender, EventArgs e)
         {
             Smalll small = new Smalll();
             small.Show();
-        }
+        }*/
         private void DisplayData()
         {
             connect.Open();
-            DataTable table = new DataTable();
-            adapter = new SqlDataAdapter("SELECT * FROM Movie", connect);
-            adapter.Fill(table);
-            moviedata.DataSource = table;
+            //DataTable table = new DataTable();
+            //adapter = new SqlDataAdapter("SELECT * FROM Movie", connect);
+            //adapter.Fill(table);
+            //moviedata.DataSource = table;
 
             adapter2 = new SqlDataAdapter("SELECT name FROM Movie", connect);
             DataTable movie_table = new DataTable();
@@ -227,6 +299,10 @@ namespace Kinozal
             }
             connect.Close();
         }
+        /*private void ClearCombo()
+        {
+            sessionbox.Items.Clear();
+        }*/
 
     }
 }
