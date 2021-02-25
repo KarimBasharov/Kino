@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,17 +14,27 @@ namespace Kinozal
     public partial class Smalll : Form
     {
         private List<Label> _labels;
-        private int xOffset = 10;
-        private int yOffset = 10;
+        SqlConnection connect = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\opilane\source\repos\KarimBasharov\Kinozal\Kinozal\AppData\Database1.mdf; Integrated Security = True");
+        SqlCommand command;
+        SqlDataAdapter adapter, adapter2;
+        Button btn;
+        Form1 f1 = new Form1();
 
         public Smalll()
         {
             InitializeComponent();
 
+            Button btn = new Button
+            {
+                Location = new Point(451, 31),
+                Text = "Сохранить"
+            };
+            this.Controls.Add(btn);
+            btn.MouseClick += Btn_MouseClick;
+
             _labels = new List<Label>();
             for (var i = 0; i <= 24; i++)
             {
-
                 Label a = new Label()
                 { 
                     Name = "lbl" + i, 
@@ -54,10 +65,44 @@ namespace Kinozal
             }
         }
 
+        private void Btn_MouseClick(object sender, MouseEventArgs e)
+        {
+            foreach(var el in _labels)
+            {
+                if(el.BackColor == Color.Red)
+                {
+                    connect.Open();
+                    command = new SqlCommand("INSERT INTO Placee(Place, Hall) VALUES(@pla,@hal)", connect);
+                    command.Parameters.AddWithValue("@pla", el);
+                    command.Parameters.AddWithValue("@hal", f1.roombox.SelectedIndex);
+                    command.ExecuteNonQuery();
+                    connect.Close();
+                }
+            }
+
+            
+
+        }
+
         private void A_MouseClick(object sender, MouseEventArgs e)
         {
             var a = (Label)sender;
-            a.BackColor = Color.Green;
+            if (a.BackColor == Color.LightYellow)
+            {
+                a.BackColor = Color.Red;
+            }
+            else if (a.BackColor == Color.Red)
+            {
+                DialogResult dialog = MessageBox.Show("Хотите отменить свой выбор?", "" ,MessageBoxButtons.YesNo);
+                if (dialog == DialogResult.Yes)
+                {
+                    a.BackColor = Color.LightYellow;
+                }
+                else if(dialog == DialogResult.No)
+                {
+                    a.BackColor = Color.Red;
+                }
+            }
             //var answer = MessageBox.Show("Хотите взять это место?", "Сохранение", MessageBoxButtons.YesNo);
             //if (answer == DialogResult.Yes)
             //{

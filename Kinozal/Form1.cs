@@ -21,7 +21,7 @@ namespace Kinozal
 
         /*Button btn1, btn2, btn3;
         Label lbl;*/
-        ComboBox moviebox, sessionbox, roombox;
+        public ComboBox moviebox, sessionbox, roombox;
         DataGridView moviedata;
         public Form1()
         {
@@ -270,7 +270,7 @@ namespace Kinozal
 
             BackColor = Color.FromArgb(R, G, B);
         }
-
+        
         /*private void Btn2_Click(object sender, EventArgs e)
         {
             Mediumm mediumm = new Mediumm();
