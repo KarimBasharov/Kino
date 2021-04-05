@@ -13,16 +13,17 @@ namespace Kinozal
 {
     public partial class Form1 : Form
     {
-        SqlConnection connect = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\opilane\source\repos\KarimBasharov\Kinozal\Kinozal\AppData\Database1.mdf; Integrated Security = True");
+        SqlConnection connect = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\karim\Source\Repos\Kinoo\Kinozal\AppData\Database1.mdf; Integrated Security = True");
         SqlCommand command;
 
         SqlDataAdapter adapter, adapter2, adapter3;
         int Id = 0;
 
-        /*Button btn1, btn2, btn3;
-        Label lbl;*/
+        /*Button btn1, btn2, btn3;*/
+        Label movielbl, sessionlbl, placelbl, infalbl;
         public ComboBox moviebox, sessionbox, roombox;
         DataGridView moviedata;
+        PictureBox picturebox1;
         public Form1()
         {
             //connect.Open();
@@ -38,23 +39,72 @@ namespace Kinozal
             //    saalide_list.Items.Add(row["Saalinimetus"])
             //}
             //connect.Close();
+
+            picturebox1 = new PictureBox
+            {
+                Location = new Point(450, 30),
+                Size = new Size(450, 450),
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+            this.Controls.Add(picturebox1);
+
+            infalbl = new Label
+            {
+                Text = "",
+                Location = new Point(900, 135),
+                Height = 450,
+                Width = 450
+            };
+            infalbl.Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+            this.Controls.Add(infalbl);
+
             moviedata = new DataGridView
             {
-                Location = new Point(451, 30),
-                Height = 212,
-                Width = 411
+                Location = new Point(11, 135),
+                Height = 85,
+                Width = 325
             };
             this.Controls.Add(moviedata);
+
+            movielbl = new Label
+            {
+                Text = "Фильм",
+                Location = new Point(11, 30),
+                Width = 94
+            };
+            movielbl.Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+            this.Controls.Add(movielbl);
+
+            sessionlbl = new Label
+            {
+                Text = "Сессия",
+                Location = new Point(11, 60),
+                Width = 98
+            };
+            sessionlbl.Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+            this.Controls.Add(sessionlbl);
+
+            placelbl = new Label
+            {
+                Text = "Зал",
+                Location = new Point(11, 90),
+                Width = 91
+            };
+            placelbl.Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
+            this.Controls.Add(placelbl);
+
             moviebox = new ComboBox
             {
-                Location = new Point(321, 30)
+                Location = new Point(110, 30),
+                Width = 220
             };
             this.Controls.Add(moviebox);
             this.moviebox.SelectedIndexChanged += Moviebox_SelectedIndexChanged;
 
             roombox = new ComboBox
             {
-                Location = new Point(321, 90)
+                Location = new Point(110, 90),
+                Width = 220
             };
             roombox.Items.Add("Маленький");
             roombox.Items.Add("Средний");
@@ -65,7 +115,8 @@ namespace Kinozal
 
             sessionbox = new ComboBox
             {
-                Location = new Point(321, 60)
+                Location = new Point(110, 60),
+                Width = 220
             };
             this.Controls.Add(sessionbox);
             this.sessionbox.SelectedIndexChanged += Sessionbox_SelectedIndexChanged;
@@ -74,8 +125,8 @@ namespace Kinozal
             InitializeComponent();
             //this.Height = 191;
             //this.Width = 367;
-            this.Height = 406;
-            this.Width = 900;
+            this.Height = 450;
+            this.Width = 1050;
             /*btn1 = new Button
             {
                 Text = "Маленький",
@@ -117,17 +168,26 @@ namespace Kinozal
         {
             if (roombox.SelectedIndex == 0)
             {
-                Smalll small = new Smalll();
+                DateTime sesio = DateTime.Parse(sessionbox.SelectedItem.ToString());
+                int mo = moviebox.SelectedIndex;
+                int ol = roombox.SelectedIndex;
+                Smalll small = new Smalll(ol, mo, sesio);
                 small.Show();
             }
             else if (roombox.SelectedIndex == 1)
             {
-                Mediumm mediumm = new Mediumm();
+                DateTime sesio = DateTime.Parse(sessionbox.SelectedItem.ToString());
+                int mo = moviebox.SelectedIndex;
+                int ol = roombox.SelectedIndex;
+                Mediumm mediumm = new Mediumm(ol, mo, sesio);
                 mediumm.Show();
             }
             else if (roombox.SelectedIndex == 2)
             {
-                Bigg bigg = new Bigg();
+                DateTime sesio = DateTime.Parse(sessionbox.SelectedItem.ToString());
+                int mo = moviebox.SelectedIndex;
+                int ol = roombox.SelectedIndex;
+                Bigg bigg = new Bigg(ol, mo, sesio);
                 bigg.Show();
             }
         }
@@ -138,7 +198,7 @@ namespace Kinozal
             {
                 DataTable table = new DataTable();
                 adapter3 = new SqlDataAdapter();
-                command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
+                command = new SqlCommand("SELECT Date FROM Session WHERE Id = @moo", connect);
                 command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 1;
                 adapter3.SelectCommand = command;
                 adapter3.Fill(table);
@@ -148,7 +208,7 @@ namespace Kinozal
             {
                 DataTable table = new DataTable();
                 adapter3 = new SqlDataAdapter();
-                command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
+                command = new SqlCommand("SELECT Date FROM Session WHERE Id = @moo", connect);
                 command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 4;
                 adapter3.SelectCommand = command;
                 adapter3.Fill(table);
@@ -158,8 +218,28 @@ namespace Kinozal
             {
                 DataTable table = new DataTable();
                 adapter3 = new SqlDataAdapter();
-                command = new SqlCommand("SELECT Date, Time FROM Session WHERE Id = @moo", connect);
-                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 8;
+                command = new SqlCommand("SELECT Date FROM Session WHERE Id = @moo", connect);
+                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 7;
+                adapter3.SelectCommand = command;
+                adapter3.Fill(table);
+                moviedata.DataSource = table;
+            }
+            if (moviebox.SelectedIndex == 3)
+            {
+                DataTable table = new DataTable();
+                adapter3 = new SqlDataAdapter();
+                command = new SqlCommand("SELECT Date FROM Session WHERE Id = @moo", connect);
+                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 10;
+                adapter3.SelectCommand = command;
+                adapter3.Fill(table);
+                moviedata.DataSource = table;
+            }
+            if (moviebox.SelectedIndex == 4)
+            {
+                DataTable table = new DataTable();
+                adapter3 = new SqlDataAdapter();
+                command = new SqlCommand("SELECT Date FROM Session WHERE Id = @moo", connect);
+                command.Parameters.AddWithValue("@moo", SqlDbType.Int).Value = sessionbox.SelectedIndex + 13;
                 adapter3.SelectCommand = command;
                 adapter3.Fill(table);
                 moviedata.DataSource = table;
@@ -178,6 +258,12 @@ namespace Kinozal
             {
                 if (moviebox.SelectedIndex == 0)
                 {
+                    infalbl.Text = "Жизнь десятилетнего Гарри Поттера нельзя назвать сладкой: его родители умерли, едва ему исполнился год, а от дяди и тётки, взявших сироту на воспитание, достаются лишь тычки да подзатыльники. " +
+                        "Но в одиннадцатый день рождения Гарри всё меняется.";
+                    picturebox1.Image = new Bitmap("harry.jpg");
+
+                    //infalbl.Text = "Babl";
+
                     sessionbox.Items.Clear();
                     DataTable table = new DataTable();
                     adapter = new SqlDataAdapter();
@@ -197,6 +283,12 @@ namespace Kinozal
                 }
                 else if (moviebox.SelectedIndex == 1)
                 {
+                    infalbl.Text = "Уэйд Уилсон — наёмник. Будучи побочным продуктом программы вооружённых сил под названием «Оружие X», Уилсон приобрёл невероятную силу, проворство и способность к исцелению. " +
+                        "Но страшной ценой: его клеточная структура постоянно меняется, а здравомыслие сомнительно. " +
+                        "Всё, чего Уилсон хочет, — это держаться на плаву в социальной выгребной яме. Но течение в ней слишком быстрое.";
+
+                    picturebox1.Image = new Bitmap("dead.png");
+
                     sessionbox.Items.Clear();
                     DataTable table = new DataTable();
                     adapter = new SqlDataAdapter();
@@ -216,6 +308,11 @@ namespace Kinozal
                 }
                 else if (moviebox.SelectedIndex == 2)
                 {
+                    infalbl.Text = "Тандзиро с друзьями из отряда уничтожителей демонов расследует серию загадочных исчезновений внутри мчащегося поезда. " +
+                        "Но компания ещё не знает, что в составе находится один из двенадцати Лунных демонов, и он приготовил для них ловушку.";
+
+                    picturebox1.Image = new Bitmap("kime.jpg");
+
                     sessionbox.Items.Clear();
                     DataTable table = new DataTable();
                     adapter = new SqlDataAdapter();
@@ -226,6 +323,54 @@ namespace Kinozal
                     moviedata.DataSource = table;
 
                     adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film = 3", connect);
+                    DataTable session_table = new DataTable();
+                    adapter3.Fill(session_table);
+                    foreach (DataRow row in session_table.Rows)
+                    {
+                        sessionbox.Items.Add(row["Date"]);
+                    }
+                }
+                else if (moviebox.SelectedIndex == 3)
+                {
+                    infalbl.Text = "Когда в городке Дерри, штат Мэн, начинают пропадать дети, несколько ребят сталкиваются со своими величайшими страхами и вынуждены помериться силами со злобным клоуном Пеннивайзом, чьи проявления жестокости и список жертв уходят в глубь веков.";
+
+                    picturebox1.Image = new Bitmap("it.jpg");
+
+                    sessionbox.Items.Clear();
+                    DataTable table = new DataTable();
+                    adapter = new SqlDataAdapter();
+                    command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
+                    command.Parameters.AddWithValue("@mo", SqlDbType.Int).Value = moviebox.SelectedIndex + 1;
+                    adapter.SelectCommand = command;
+                    adapter.Fill(table);
+                    moviedata.DataSource = table;
+
+                    adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film = 4", connect);
+                    DataTable session_table = new DataTable();
+                    adapter3.Fill(session_table);
+                    foreach (DataRow row in session_table.Rows)
+                    {
+                        sessionbox.Items.Add(row["Date"]);
+                    }
+                }
+                else if (moviebox.SelectedIndex == 4)
+                {
+                    infalbl.Text = "После исторической встречи с командой Мстителей Питер Паркер возвращается домой, стараясь зажить обычной жизнью под опекой своей тети Мэй. " +
+                        "Но теперь за Питером приглядывает еще кое-что… Тони Старк видел Человека-Паука в деле и должен стать его наставником. " +
+                        "Когда новый злодей Стервятник угрожает уничтожить все, что дорого Питеру, приходит время доказать всем, что такое настоящий супергерой.";
+
+                    picturebox1.Image = new Bitmap("spider.jpg");
+
+                    sessionbox.Items.Clear();
+                    DataTable table = new DataTable();
+                    adapter = new SqlDataAdapter();
+                    command = new SqlCommand("SELECT duration, age FROM Movie WHERE Id = @mo", connect);
+                    command.Parameters.AddWithValue("@mo", SqlDbType.Int).Value = moviebox.SelectedIndex + 1;
+                    adapter.SelectCommand = command;
+                    adapter.Fill(table);
+                    moviedata.DataSource = table;
+
+                    adapter3 = new SqlDataAdapter("SELECT Date FROM Session Where Film = 5", connect);
                     DataTable session_table = new DataTable();
                     adapter3.Fill(session_table);
                     foreach (DataRow row in session_table.Rows)
